@@ -1,0 +1,48 @@
+vlans:
+    50:
+        name: INTERNET
+    2100:
+        name: MGT
+    2102:
+        name: STORAGE
+
+laggs:
+    1:
+        description: Uplink
+
+interfaces:
+    'Ethernet1/1':
+        lagg: 1
+    'Ethernet2/1':
+        lagg: 1 
+
+    'Ethernet1/2':
+        address: 10.4.51.1/30
+    'Ethernet1/3':
+        address: 10.4.51.5/30
+    'Ethernet1/4':
+        address: 10.4.51.9/30
+    
+    'Ethernet2/2':
+        address: 10.4.52.1/30
+    'Ethernet2/3':
+        address: 10.4.52.5/30
+    'Ethernet2/4':
+        address: 10.4.52.9/30
+
+evpn_peers:
+    65401:
+        underlay:
+        - 10.4.51.2
+        - 10.4.52.2
+        overlay: 10.4.3.1
+    65402:
+        underlay:
+        - 10.4.51.6
+        - 10.4.52.6
+        overlay: 10.4.3.2
+    65403:
+        underlay:
+        - 10.4.51.10
+        - 10.4.52.10
+        overlay: 10.4.3.3

@@ -1,0 +1,125 @@
+
+load-interval default 5
+!
+transceiver qsfp default-mode 4x10G
+!
+interface defaults
+   mtu 9216
+!
+service routing protocols model multi-agent
+!
+logging level BGP informational
+logging level VXLAN informational
+!
+hostname p4-sw1
+ip name-server vrf default 1.1.1.1
+!
+snmp-server community public ro
+!
+spanning-tree mode mstp
+!
+aaa authorization exec default local
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$/dshLkpyAs4LyadI$6WPoFOnOyPA.evp0npJqIwAN6beYl0hkeNxE8bhf5JsH066uoh4OAjNpsTPkB6X37S.hXuaduBmcBpgjd5vKn.
+!
+{%- for vlan_id, vlan in vlans.items() %}
+vlan {{ vlan_id }}
+   name {{ vlan['name'] }}
+!
+{%- endfor %}
+vrf instance servers-underlay
+!
+interface Port-Channel1
+   switchport mode trunk
+!
+interface Recirc-Channel1
+   no switchport
+   switchport recirculation features vxlan
+!
+{%- for intf_name, intf in interfaces | if_sort %}
+interface {{ intf_name }}
+ {%- if not intf['shutdown'] | default(False) %}
+
+ {%- if intf['address'] | default(False) %}
+   no switchport
+   ip address {{ intf['address'] }}
+ {%- endif %}
+
+ {%- if intf['lagg'] | default(False) %}
+   switchport mode trunk
+   channel-group {{ intf['lagg'] }} mode active
+ {%- endif %}
+
+ {%- else %}
+ {%- endif %}
+!
+{%- endfor %}
+interface Loopback0
+   ip address 10.4.3.100/32
+!
+interface Management1
+   ip address 10.4.0.7/24
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+{%- for vlan_id, vlan in vlans.items() %}
+   vxlan vlan {{ vlan_id }} vni {{ vlan_id }}
+{%- endfor %}
+   vxlan learn-restrict any
+!
+ip virtual-router mac-address 00:00:11:11:22:22
+!
+ip routing
+ip routing vrf servers-underlay
+!
+ip route 0.0.0.0/0 10.4.0.1
+!
+router bgp 65400
+   maximum-paths 4 ecmp 4
+   neighbor overlay peer group
+   neighbor overlay next-hop-unchanged
+   neighbor overlay update-source Loopback0
+   neighbor overlay ebgp-multihop 3
+   neighbor overlay send-community extended
+   neighbor overlay maximum-routes 12000
+   neighbor underlay peer group
+   neighbor underlay next-hop-self
+   neighbor underlay ebgp-multihop 3
+   neighbor underlay route-reflector-client
+   neighbor underlay send-community extended
+   neighbor underlay maximum-routes 12000
+   {%- for peer_asn, peer_params in evpn_peers.items() %}
+   neighbor {{ peer_params['overlay'] }} peer group overlay
+   neighbor {{ peer_params['overlay'] }} remote-as {{ peer_asn }}
+   {%- endfor %}
+   
+   {%- for peer_asn, peer_params in evpn_peers.items() %}
+   {%- for address in peer_params['underlay'] %}
+   neighbor {{ address }} peer group underlay
+   neighbor {{ address }} remote-as {{ peer_asn }}
+   {%- endfor %}
+   {%- endfor %}
+   !
+   {%- for vlan_id, vlan in vlans.items() %}
+   vlan {{ vlan_id }}
+      rd auto
+      route-target both 65400:1
+      redistribute learned
+   !
+   {%- endfor %}
+   address-family evpn
+      neighbor overlay activate
+      no neighbor underlay activate
+   !
+   address-family ipv4
+      no neighbor overlay activate
+      neighbor underlay activate
+      network 10.4.3.100/32
+!
+management ssh
+   authentication mode password
+!
+end
