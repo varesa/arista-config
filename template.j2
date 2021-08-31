@@ -22,7 +22,7 @@ aaa authorization exec default local
 !
 no aaa root
 !
-username admin privilege 15 role network-admin secret sha512 $6$/dshLkpyAs4LyadI$6WPoFOnOyPA.evp0npJqIwAN6beYl0hkeNxE8bhf5JsH066uoh4OAjNpsTPkB6X37S.hXuaduBmcBpgjd5vKn.
+username admin privilege 15 role network-admin secret sha512 {{ admin_password }}
 !
 {%- for vlan_id, vlan in vlans.items() %}
 vlan {{ vlan_id }}
