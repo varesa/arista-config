@@ -1,0 +1,76 @@
+dns-resolver:
+  config:
+    server:
+    - 10.10.10.10
+    - 1.1.1.1
+
+routes:
+  config:
+  - destination: 0.0.0.0/0
+    next-hop-address: 10.4.0.1
+    next-hop-interface: managementx
+
+interfaces:
+- name: dummy0
+  type: dummy
+  state: up
+  ipv4:
+    enabled: true
+    address:
+    - ip: {{ loopback }}
+      prefix-length: 32
+  mtu: 65536
+
+{%- for vlan_id, vlan in vlans.items() %}
+- name: vxlan{{ vlan_id }}
+  type: vxlan
+  state: up
+  mtu: 1500
+  vxlan:
+    destination-port: 4789
+    id: {{ vlan_id }}
+    learning: false
+    local: {{ loopback }}
+
+- name: {{ vlan['name'] }}x
+  type: linux-bridge
+  state: up
+  bridge:
+    options:
+      stp:
+        enabled: false
+    port:
+    - name: vxlan{{ vlan_id }}
+  {%- if vlan['host_base'] | default(False) %}
+  ipv4:
+    enabled: true
+    address:
+    - ip: {{ vlan['host_ip'] }}
+      prefix-length: 24
+  {%- endif %}
+  mtu: 1500
+{% endfor %}
+
+- name: eno1
+  type: ethernet
+  state: up
+  ipv4:
+    enabled: true
+    address:
+    - ip: {{ localip_a }}
+      prefix-length: 30
+  lldp:
+    enabled: true
+  mtu: 2000
+- name: eno2
+  type: ethernet
+  state: up
+  ipv4:
+    enabled: true
+    address:
+    - ip: {{ localip_b }}
+      prefix-length: 30
+  lldp:
+    enabled: true
+  mtu: 2000
+

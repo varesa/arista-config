@@ -91,15 +91,15 @@ router bgp 65400
    neighbor underlay route-reflector-client
    neighbor underlay send-community extended
    neighbor underlay maximum-routes 12000
-   {%- for peer_asn, peer_params in evpn_peers.items() %}
+   {%- for peer_id, peer_params in evpn_peers.items() %}
    neighbor {{ peer_params['overlay'] }} peer group overlay
-   neighbor {{ peer_params['overlay'] }} remote-as {{ peer_asn }}
+   neighbor {{ peer_params['overlay'] }} remote-as {{ peer_params['asn'] }}
    {%- endfor %}
    
-   {%- for peer_asn, peer_params in evpn_peers.items() %}
+   {%- for peer_id, peer_params in evpn_peers.items() %}
    {%- for address in peer_params['underlay'] %}
    neighbor {{ address }} peer group underlay
-   neighbor {{ address }} remote-as {{ peer_asn }}
+   neighbor {{ address }} remote-as {{ peer_params['asn'] }}
    {%- endfor %}
    {%- endfor %}
    !

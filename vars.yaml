@@ -1,10 +1,12 @@
 vlans:
     50:
-        name: INTERNET
+        name: internet
     2100:
-        name: MGT
+        name: management
+        host_base: 10.4.0.30
     2102:
-        name: STORAGE
+        name: storage
+        host_base: 10.4.2.30
 
 laggs:
     1:
@@ -31,17 +33,23 @@ interfaces:
         address: 10.4.52.9/30
 
 evpn_peers:
-    65401:
+    1:
+        asn: 65401
+        name: kvm01
         underlay:
         - 10.4.51.2
         - 10.4.52.2
         overlay: 10.4.3.1
-    65402:
+    2:
+        asn: 65402
+        name: kvm02
         underlay:
         - 10.4.51.6
         - 10.4.52.6
         overlay: 10.4.3.2
-    65403:
+    3:
+        asn: 65403
+        name: kvm03
         underlay:
         - 10.4.51.10
         - 10.4.52.10
