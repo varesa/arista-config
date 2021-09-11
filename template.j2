@@ -2,7 +2,7 @@ dhcp server
 {%- for pool in dhcp_pools %}
    subnet {{ pool['network'] }}
       range {{ pool['address'] }} {{ pool['address'] }}
-   !
+{{ "   !" if not loop.last }}
 {%- endfor %}
 !
 load-interval default 5
