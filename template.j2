@@ -1,4 +1,10 @@
-
+dhcp server
+{%- for pool in dhcp_pools %}
+   subnet {{ pool['network'] }}
+      range {{ pool['address'] }} {{ pool['address'] }}
+   !
+{%- endfor %}
+!
 load-interval default 5
 !
 transceiver qsfp default-mode 4x10G
@@ -45,6 +51,10 @@ interface {{ intf_name }}
  {%- if intf['address'] | default(False) %}
    no switchport
    ip address {{ intf['address'] }}
+ {%- endif %}
+
+ {%- if intf['dhcp'] | default(False) %}
+   dhcp server ipv4
  {%- endif %}
 
  {%- if intf['lagg'] | default(False) %}

@@ -20,17 +20,23 @@ interfaces:
 
     'Ethernet1/2':
         address: 10.4.51.1/30
+        dhcp: true
     'Ethernet1/3':
         address: 10.4.51.5/30
+        dhcp: true
     'Ethernet1/4':
         address: 10.4.51.9/30
+        dhcp: true
     
     'Ethernet2/2':
         address: 10.4.52.1/30
+        dhcp: true
     'Ethernet2/3':
         address: 10.4.52.5/30
+        dhcp: true
     'Ethernet2/4':
         address: 10.4.52.9/30
+        dhcp: true
 
 evpn_peers:
     1:

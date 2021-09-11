@@ -40,6 +40,13 @@ jinja_env.filters['if_sort'] = if_sort
 jinja_env.undefined = jinja2.StrictUndefined
 template = jinja_env.get_template('template.j2')
 
+vars['dhcp_pools'] = []
+for interface_name, interface in vars['interfaces'].items():
+    if interface.get('dhcp', False):
+        network = ipaddress.IPv4Interface(interface['address']).network
+        peer = ipaddress.IPv4Interface(interface['address']).ip + 1
+        vars['dhcp_pools'].append({"network": str(network), "address": str(peer)})
+
 for int_i, int_sub in itertools.product(range(1,25), range(1,5)):
     interface = f'Ethernet{int_i}/{int_sub}'
     if interface not in vars['interfaces'].keys():
