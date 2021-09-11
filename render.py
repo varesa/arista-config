@@ -50,6 +50,12 @@ for int_i in range(25,33):
     if interface not in vars['interfaces'].keys():
         vars['interfaces'][interface] = { "shutdown": True }
 
+underlay_peers = []
+for id, peer in vars['evpn_peers'].items():
+    for address in peer['underlay']:
+        underlay_peers.append({"address": address, "asn": peer['asn']})
+vars['underlay_peers'] = sorted(underlay_peers, key=lambda peer: [int(octet) for octet in peer['address'].split('.')])
+
 for line in template.render(**vars).split('\n'):
     if line.strip() != "":
         print(line)

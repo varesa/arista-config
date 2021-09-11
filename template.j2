@@ -96,11 +96,9 @@ router bgp 65400
    neighbor {{ peer_params['overlay'] }} remote-as {{ peer_params['asn'] }}
    {%- endfor %}
    
-   {%- for peer_id, peer_params in evpn_peers.items() %}
-   {%- for address in peer_params['underlay'] %}
-   neighbor {{ address }} peer group underlay
-   neighbor {{ address }} remote-as {{ peer_params['asn'] }}
-   {%- endfor %}
+   {%- for params in underlay_peers %}
+   neighbor {{ params['address'] }} peer group underlay
+   neighbor {{ params['address'] }} remote-as {{ params['asn'] }}
    {%- endfor %}
    !
    {%- for vlan_id, vlan in vlans.items() %}
