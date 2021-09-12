@@ -32,7 +32,6 @@ def apply_config(config):
 			print(e.stdout.decode())
 			print(e.stderr.decode())
 
-print(os.getcwd())
 current_config = get_config()
 candidate_config = check_output(['./render.py']).decode()
 changes = diff(current_config, candidate_config)
