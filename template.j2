@@ -111,7 +111,7 @@ router bgp 65400
    neighbor {{ params['address'] }} remote-as {{ params['asn'] }}
    {%- endfor %}
    !
-   {%- for vlan_id, vlan in vlans.items() %}
+   {%- for vlan_id, vlan in vlans.items() | sort(attribute='1.id_s')%}
    vlan {{ vlan_id }}
       rd auto
       route-target both 65400:1

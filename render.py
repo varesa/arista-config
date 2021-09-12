@@ -63,6 +63,9 @@ for id, peer in vars['evpn_peers'].items():
         underlay_peers.append({"address": address, "asn": peer['asn']})
 vars['underlay_peers'] = sorted(underlay_peers, key=lambda peer: [int(octet) for octet in peer['address'].split('.')])
 
+for vlan_id, vlan in vars['vlans'].items():
+    vars['vlans'][vlan_id]['id_s'] = str(vlan_id)
+
 for line in template.render(**vars).split('\n'):
     if line.strip() != "":
         print(line)
