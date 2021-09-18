@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request
+from flask import Flask, request, send_file
 from ipaddress import IPv4Address
+import io
 import jinja2
 import os
 import tarfile
@@ -75,10 +76,13 @@ def frr_config():
             with open(os.path.join(temp, template_name), 'w') as config:
                 config.write(template.render(**vars))
         
-        with tarfile.open('/home/admin/test.tar.gz', 'w:gz') as archive:
+        with tarfile.open(os.path.join(temp, 'frr.tar.gz'), 'w:gz') as archive:
             archive.add(temp, arcname='frr', filter=frr_config_perms)
 
-    return "K\n"
+        with open(os.path.join(temp, 'frr.tar.gz'), 'rb') as archive:
+            # Copy into memory
+            archive_bytes = io.BytesIO(archive.read())
+            return send_file(archive_bytes, download_name='frr.tar.gz', mimetype='application/gzip')
 
 
 @app.route("/nmstate")
