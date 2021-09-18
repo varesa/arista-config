@@ -122,6 +122,10 @@ provision_script = """
 # Set hostname
 hostnamectl set-hostname _HOSTNAME_
 
+# Set rp_filter
+echo "net.ipv4.conf.all.rp_filter=2" >> /etc/sysctl.d/99-sysctl.conf
+sysctl -p
+
 # Pull network config
 
 nmstatectl apply <(curl -Ss "http://${1}:50005/nmstate")
@@ -134,6 +138,7 @@ rm -rf /etc/frr
 cd /etc
 tar xvfz "${temp}/frr.tar.gz"
 rm -rf "${temp}"
+chown frr: /etc/frr -R
 
 systemctl restart frr
 
@@ -151,7 +156,9 @@ def serve_provisioning_script():
     vars = get_vars()
     # Use a simple replace() to avoid having to escape braces
     # in the bash script which would otherwise be interpreted by format() 
-    return provision_script.replace('_HOSTNAME_', vars['hostname'])
+    return provision_script\
+        .replace('_HOSTNAME_', vars['hostname'])\
+        .strip()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=50005)
