@@ -3,6 +3,9 @@
 from flask import Flask, request
 from ipaddress import IPv4Address
 import jinja2
+import os
+import tarfile
+import tempfile
 import yaml
 
 app = Flask(__name__)
@@ -40,7 +43,21 @@ def get_vars():
 
 @app.route("/frr")
 def frr_config():
-    return str(get_vars()) + "\n"
+    vars = get_vars()
+    template_names = os.listdir('frr')
+    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('frr'))
+    jinja_env.undefined = jinja2.StrictUndefined
+
+    with tempfile.TemporaryDirectory() as temp:
+        for template_name in template_names:
+            template = jinja_env.get_template(template_name)
+            with open(os.path.join(temp, template_name), 'w') as config:
+                config.write(template.render(**vars))
+        
+        with tarfile.open('/home/admin/test.tar.gz', 'w:gz') as archive:
+            archive.add(temp, arcname='frr')
+
+    return "K\n"
 
 
 @app.route("/nmstate")
