@@ -80,7 +80,8 @@ def frr_config():
             archive.add(temp, arcname='frr', filter=frr_config_perms)
 
         with open(os.path.join(temp, 'frr.tar.gz'), 'rb') as archive:
-            # Copy into memory
+            # Copy into memory, since the file/tempdir seem to get closed before the actual send
+            # happens
             archive_bytes = io.BytesIO(archive.read())
             return send_file(archive_bytes, download_name='frr.tar.gz', mimetype='application/gzip')
 
