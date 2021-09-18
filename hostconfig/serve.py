@@ -120,7 +120,7 @@ provision_script = """
 #!/bin/bash
 
 # Set hostname
-hostnamectl set-hostname {hostname}
+hostnamectl set-hostname _HOSTNAME_
 
 # Pull network config
 
@@ -149,7 +149,9 @@ def serve_provisioning_script():
     """
 
     vars = get_vars()
-    return provision_script.format(hostname=vars['hostname'])
+    # Use a simple replace() to avoid having to escape braces
+    # in the bash script which would otherwise be interpreted by format() 
+    return provision_script.replace('_HOSTNAME_', vars['hostname'])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=50005)
