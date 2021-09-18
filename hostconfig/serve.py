@@ -123,7 +123,8 @@ provision_script = """
 hostnamectl set-hostname _HOSTNAME_
 
 # Set rp_filter
-echo "net.ipv4.conf.all.rp_filter=2" >> /etc/sysctl.d/99-sysctl.conf
+grep -q rp_filter /etc/sysctl.d/99-sysctl.conf || \
+    echo "net.ipv4.conf.all.rp_filter=2" >> /etc/sysctl.d/99-sysctl.conf
 sysctl -p
 
 # Pull network config
@@ -143,7 +144,8 @@ chown frr: /etc/frr -R
 systemctl restart frr
 
 # Run puppet
-puppet agent -t --certname "$(hostname).p4.esav.fi"
+dnf install -y puppet-agent
+/opt/puppetlabs/bin/puppet agent -t --certname "$(hostname).p4.esav.fi"
 """
 
 
