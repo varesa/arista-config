@@ -72,7 +72,7 @@ def frr_config_perms(file: tarfile.TarInfo) -> tarfile.TarInfo:
     return file
 
 
-@app.route("/frr")
+@app.route("/frr.tar.gz")
 def frr_config():
     """
     Render all configuration files under frr/, bundle them into a .tar.gz
@@ -115,6 +115,34 @@ def nmstate_config():
 
     return template.render(**vars)
 
+
+provision_script = """
+#!/bin/bash
+
+# Pull network config
+
+nmstatectl apply <(curl -Ss "http://${1}:50005/nmstate")
+
+# Pull FRR config
+
+temp="$(mktemp -d)"
+curl "http://${1}:50005/frr.tar.gz" -o "${temp}/frr.tar.gz"
+rm -rf /etc/frr
+cd /etc
+tar xvfz "${temp}/frr.tar.gz"
+rm -rf "${temp}"
+
+systemctl restart frr
+"""
+
+
+@app.route("/provision")
+def serve_provisioning_script():
+    """
+    Return a script that handles the second stage of setting up the networking
+    """
+
+    return provision_script
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=50005)
