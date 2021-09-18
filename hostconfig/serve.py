@@ -8,29 +8,34 @@ import yaml
 app = Flask(__name__)
 
 
-def get_vars():
+def get_peer(sw_vars: dict, peer_ip: str) -> (int, dict):
+    for host_id, params in sw_vars['evpn_peers'].items():
+        if peer_ip in params['underlay']:
+            return host_id, params
 
+
+def get_vars():
     with open('../vars.yaml', 'r') as f:
         sw_vars = yaml.safe_load(f)
 
+    peer_ip = request.remote_addr
+    peer_id, peer_params = get_peer(sw_vars, peer_ip)
+
     vars = {}
 
-    for host_id, params in sw_vars['evpn_peers'].items():
-        if request.remote_addr in params['underlay']:
-            vars['asn'] = params['asn']
-            vars['hostname'] = params['name']
-            vars['loopback'] = params['overlay']
-            for offset, side in enumerate(['a', 'b']):
-                vars[f'localip_{side}'] = params['underlay'][offset]
-                vars[f'swip_{side}'] = str(IPv4Address(params['underlay'][offset])-1)
+    vars['asn'] = peer_params['asn']
+    vars['hostname'] = peer_params['name']
+    vars['loopback'] = peer_params['overlay']
+    for offset, side in enumerate(['a', 'b']):
+        vars[f'localip_{side}'] = peer_params['underlay'][offset]
+        vars[f'swip_{side}'] = str(IPv4Address(peer_params['underlay'][offset])-1)
 
-            vars['vlans'] = sw_vars['vlans']
-            for vlan_id, vlan in vars['vlans'].items():
-                if 'host_base' in vlan.keys():
-                    vars['vlans'][vlan_id]['host_ip'] = str(IPv4Address(vlan['host_base']) + host_id)
-            
-            return vars
-
+    vars['vlans'] = sw_vars['vlans']
+    for vlan_id, vlan in vars['vlans'].items():
+        if 'host_base' in vlan.keys():
+            vars['vlans'][vlan_id]['host_ip'] = str(IPv4Address(vlan['host_base']) + peer_id)
+    
+    return vars
 
 
 @app.route("/frr")
