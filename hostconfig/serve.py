@@ -138,7 +138,7 @@ rm -rf "${temp}"
 systemctl restart frr
 
 # Run puppet
-puppet agent -t
+puppet agent -t --certname "$(hostname).p4.esav.fi"
 """
 
 
