@@ -12,12 +12,23 @@ app = Flask(__name__)
 
 
 def get_peer(sw_vars: dict, peer_ip: str) -> (int, dict):
+    """
+    Filter the list of configured peers for the given IP address
+    """
+
     for host_id, params in sw_vars['evpn_peers'].items():
         if peer_ip in params['underlay']:
             return host_id, params
+    
+    return None
 
 
 def get_vars():
+    """
+    Generate a view of the configuration variables specific to the 
+    client that connected.
+    """
+
     with open('../vars.yaml', 'r') as f:
         sw_vars = yaml.safe_load(f)
 
@@ -41,6 +52,16 @@ def get_vars():
     return vars
 
 
+def frr_config_perms(file: tarfile.TarInfo) -> tarfile.TarInfo:
+    """
+    Fix the ownership of the files going into the archive
+    """
+
+    file.uid = 0
+    file.gid = 0
+    return file
+
+
 @app.route("/frr")
 def frr_config():
     vars = get_vars()
@@ -55,7 +76,7 @@ def frr_config():
                 config.write(template.render(**vars))
         
         with tarfile.open('/home/admin/test.tar.gz', 'w:gz') as archive:
-            archive.add(temp, arcname='frr')
+            archive.add(temp, arcname='frr', filter=frr_config_perms)
 
     return "K\n"
 
