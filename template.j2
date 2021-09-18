@@ -20,6 +20,11 @@ logging level VXLAN informational
 hostname p4-sw1
 ip name-server vrf default 1.1.1.1
 !
+ntp server ntp1.funet.fi iburst
+ntp server ntp2.funet.fi iburst
+ntp server ntp3.funet.fi iburst
+ntp server ntp4.funet.fi iburst
+!
 snmp-server community public ro
 !
 spanning-tree mode mstp
