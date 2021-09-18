@@ -119,6 +119,9 @@ def nmstate_config():
 provision_script = """
 #!/bin/bash
 
+# Set hostname
+hostnamectl set-hostname {hostname}
+
 # Pull network config
 
 nmstatectl apply <(curl -Ss "http://${1}:50005/nmstate")
@@ -133,6 +136,9 @@ tar xvfz "${temp}/frr.tar.gz"
 rm -rf "${temp}"
 
 systemctl restart frr
+
+# Run puppet
+puppet agent -t
 """
 
 
@@ -142,7 +148,8 @@ def serve_provisioning_script():
     Return a script that handles the second stage of setting up the networking
     """
 
-    return provision_script
+    vars = get_vars()
+    return provision_script.format(hostname=vars['hostname'])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=50005)
