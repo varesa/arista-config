@@ -57,8 +57,8 @@ def frr_config_perms(file: tarfile.TarInfo) -> tarfile.TarInfo:
     Fix the ownership of the files going into the archive
     """
 
-    file.uid = 0
-    file.gid = 0
+    file.uid = file.gid = 0
+    file.uname = file.gname = "root"
     return file
 
 
