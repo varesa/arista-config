@@ -14,7 +14,9 @@ app = Flask(__name__)
 
 def get_peer(sw_vars: dict, peer_ip: str) -> (int, dict):
     """
-    Filter the list of configured peers for the given IP address
+    Filter the list of configured peers for the given IP address.
+
+    Returns the ID of the peer in the dict and parameters under that ID.
     """
 
     for host_id, params in sw_vars['evpn_peers'].items():
@@ -24,10 +26,12 @@ def get_peer(sw_vars: dict, peer_ip: str) -> (int, dict):
     return None
 
 
-def get_vars():
+def get_vars() -> dict:
     """
     Generate a view of the configuration variables specific to the 
     client that connected.
+
+    Requires active Flask request context
     """
 
     with open('../vars.yaml', 'r') as f:
@@ -38,13 +42,17 @@ def get_vars():
 
     vars = {}
 
+    # Basic details
     vars['asn'] = peer_params['asn']
     vars['hostname'] = peer_params['name']
     vars['loopback'] = peer_params['overlay']
+
+    # Link networks
     for offset, side in enumerate(['a', 'b']):
         vars[f'localip_{side}'] = peer_params['underlay'][offset]
         vars[f'swip_{side}'] = str(IPv4Address(peer_params['underlay'][offset])-1)
 
+    # VLANs
     vars['vlans'] = sw_vars['vlans']
     for vlan_id, vlan in vars['vlans'].items():
         if 'host_base' in vlan.keys():
@@ -55,7 +63,8 @@ def get_vars():
 
 def frr_config_perms(file: tarfile.TarInfo) -> tarfile.TarInfo:
     """
-    Fix the ownership of the files going into the archive
+    A tarfile filter to fix the ownership of the files going into the archive,
+    e.g. remove traces of eosadmin.
     """
 
     file.uid = file.gid = 0
@@ -65,6 +74,11 @@ def frr_config_perms(file: tarfile.TarInfo) -> tarfile.TarInfo:
 
 @app.route("/frr")
 def frr_config():
+    """
+    Render all configuration files under frr/, bundle them into a .tar.gz
+    and return to client. All archived files will have the path frr/<filename>
+    """
+
     vars = get_vars()
     template_names = os.listdir('frr')
     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('frr'))
@@ -88,6 +102,11 @@ def frr_config():
 
 @app.route("/nmstate")
 def nmstate_config():
+    """
+    Render an nmstate configuration file containing both underlay and overlay
+    network interface configurations for the given host.
+    """
+
     vars = get_vars()
 
     jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
