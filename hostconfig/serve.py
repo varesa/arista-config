@@ -111,7 +111,7 @@ def nmstate_config():
 
     vars = get_vars()
 
-    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
+    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(basepath))
     jinja_env.undefined = jinja2.StrictUndefined
     template = jinja_env.get_template('nmstate.j2')
 
