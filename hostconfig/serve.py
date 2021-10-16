@@ -121,6 +121,8 @@ def nmstate_config():
 provision_script = """
 #!/bin/bash
 
+set -euo pipefail
+
 # Set hostname
 hostnamectl set-hostname _HOSTNAME_
 
