@@ -129,6 +129,9 @@ grep -q rp_filter /etc/sysctl.d/99-sysctl.conf || \
     echo "net.ipv4.conf.all.rp_filter=2" >> /etc/sysctl.d/99-sysctl.conf
 sysctl -p
 
+# Disable firewall
+systemctl disable --now firewalld
+
 # Pull network config
 
 nmstatectl apply <(curl -Ss "http://${1}:50005/nmstate")
