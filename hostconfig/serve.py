@@ -5,11 +5,13 @@ from ipaddress import IPv4Address
 import io
 import jinja2
 import os
+import sys
 import tarfile
 import tempfile
 import yaml
 
 app = Flask(__name__)
+basepath = os.path.dirname(sys.argv[0])
 
 
 def get_peer(sw_vars: dict, peer_ip: str) -> (int, dict):
@@ -34,7 +36,7 @@ def get_vars() -> dict:
     Requires active Flask request context
     """
 
-    with open('../vars.yaml', 'r') as f:
+    with open(os.path.join(basepath, '../vars.yaml'), 'r') as f:
         sw_vars = yaml.safe_load(f)
 
     peer_ip = request.remote_addr
@@ -80,8 +82,8 @@ def frr_config():
     """
 
     vars = get_vars()
-    template_names = os.listdir('frr')
-    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('frr'))
+    template_names = os.listdir(os.path.join(basepath, 'frr'))
+    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.join(basepath, 'frr')))
     jinja_env.undefined = jinja2.StrictUndefined
 
     with tempfile.TemporaryDirectory() as temp:
