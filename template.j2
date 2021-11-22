@@ -1,9 +1,15 @@
+daemon hostconfig
+   exec /home/admin/config/venv/bin/python /home/admin/config/hostconfig/serve.py
+   no shutdown
+!
 dhcp server
 {%- for pool in dhcp_pools %}
    subnet {{ pool['network'] }}
       range {{ pool['address'] }} {{ pool['address'] }}
 {{ "   !" if not loop.last }}
 {%- endfor %}
+!
+errdisable recovery cause xcvr-unsupported
 !
 load-interval default 5
 !
@@ -22,12 +28,12 @@ ip name-server vrf default 1.1.1.1
 !
 ntp server ntp1.funet.fi iburst
 ntp server ntp2.funet.fi iburst
-ntp server ntp3.funet.fi iburst
-ntp server ntp4.funet.fi iburst
 !
 snmp-server community public ro
 !
 spanning-tree mode mstp
+!
+service unsupported-transceiver EMC 677096c7
 !
 aaa authorization exec default local
 !
