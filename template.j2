@@ -64,6 +64,11 @@ interface {{ intf_name }}
    ip address {{ intf['address'] }}
  {%- endif %}
 
+ {%- if intf['vlans'] | default(False) %}
+   switchport trunk allowed vlan {{ intf['vlans'] }}
+   switchport mode trunk
+ {%- endif %}
+
  {%- if intf['dhcp'] | default(False) %}
    dhcp server ipv4
  {%- endif %}
