@@ -55,7 +55,7 @@ interface Recirc-Channel1
    no switchport
    switchport recirculation features vxlan
 !
-{%- for intf_name, intf in interfaces | if_sort %}
+{%- for intf_name, intf in interfaces | if_filter | if_sort %}
 interface {{ intf_name }}
  {%- if not intf['shutdown'] | default(False) %}
 
@@ -76,6 +76,12 @@ interface {{ intf_name }}
  {%- if intf['lagg'] | default(False) %}
    switchport mode trunk
    channel-group {{ intf['lagg'] }} mode active
+ {%- endif %}
+
+ {%- if intf['recirc'] | default(False) %}
+   traffic-loopback source system device mac
+   no switchport
+   channel-group recirculation 1
  {%- endif %}
 
  {%- else %}

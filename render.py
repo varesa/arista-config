@@ -30,13 +30,24 @@ def if_sort_key(interface: tuple):
     else:
         return (type, int(numbers), 0)
 
+
 def if_sort(interfaces: dict):
     return sorted(interfaces.items(), key=if_sort_key)
+
+
+def if_filter(interfaces: dict) -> dict:
+    filtered = {}
+    for interface, params in interfaces.items():
+        if not params.get('ignore', False):
+            filtered[interface] = params
+    return filtered
+
 
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
 jinja_env.filters['ip_address'] = ip_address
 jinja_env.filters['ip_mask'] = ip_mask
 jinja_env.filters['if_sort'] = if_sort
+jinja_env.filters['if_filter'] = if_filter
 jinja_env.undefined = jinja2.StrictUndefined
 template = jinja_env.get_template('template.j2')
 
