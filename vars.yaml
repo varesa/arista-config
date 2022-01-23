@@ -1,16 +1,27 @@
 vlans:
     50:
         name: internet
+    2001:
+        name: poasnet1
+    2002:
+        name: poasnet2
     2100:
         name: management
         host_base: 10.4.0.30
     2102:
         name: storage
         host_base: 10.4.2.30
+    2201:
+        name: test1
+    2202:
+        name: test2
 
 laggs:
     1:
-        description: Uplink
+        description: management switch
+    2:
+        description: POASnet her0-rtr1
+        vlans: '50'
 
 interfaces:
     'Ethernet1/1':
@@ -37,6 +48,41 @@ interfaces:
     'Ethernet2/4':
         address: 10.4.52.9/30
         dhcp: true
+
+    'Ethernet5/1':
+        description: POASnet her0-rtr1
+        lagg: 2
+        lacp_timer: fast
+    'Ethernet6/1':
+        description: POASnet her0-rtr1
+        lagg: 2
+        lacp_timer: fast
+    'Ethernet5/2':
+        ignore: true
+    'Ethernet5/3':
+        ignore: true
+    'Ethernet5/4':
+        ignore: true
+    'Ethernet6/2':
+        ignore: true
+    'Ethernet6/3':
+        ignore: true
+    'Ethernet6/4':
+        ignore: true
+
+    'Ethernet9/1':
+        vlans: '2001-2002'
+    'Ethernet9/2':
+        ignore: true
+    'Ethernet9/3':
+        ignore: true
+    'Ethernet9/4':
+        ignore: true
+
+    'Ethernet31':
+        recirc: true
+    'Ethernet32':
+        recirc: true
 
 evpn_peers:
     1:

@@ -46,9 +46,15 @@ vlan {{ vlan_id }}
    name {{ vlan['name'] }}
 !
 {%- endfor %}
-interface Port-Channel1
+{%- for lagg_id, lagg in laggs.items() %}
+interface Port-Channel{{lagg_id}}
+   description {{ lagg['description'] }}
+ {%- if lagg['vlans'] | default(False) %}
+   switchport trunk allowed vlan {{ lagg['vlans'] }}
+ {%- endif %}
    switchport mode trunk
 !
+{%- endfor %}
 interface Recirc-Channel1
    no switchport
    switchport recirculation features vxlan
@@ -56,6 +62,10 @@ interface Recirc-Channel1
 {%- for intf_name, intf in interfaces | if_filter | if_sort %}
 interface {{ intf_name }}
  {%- if not intf['shutdown'] | default(False) %}
+
+ {%- if intf['description'] | default(False) %}
+   description {{ intf['description'] }}
+ {%- endif %}
 
  {%- if intf['address'] | default(False) %}
    no switchport
@@ -80,6 +90,10 @@ interface {{ intf_name }}
    traffic-loopback source system device mac
    no switchport
    channel-group recirculation 1
+ {%- endif %}
+
+ {%- if intf['lacp_timer'] | default(False) %}
+   lacp timer {{ intf['lacp_timer'] }}
  {%- endif %}
 
  {%- else %}
