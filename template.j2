@@ -46,8 +46,6 @@ vlan {{ vlan_id }}
    name {{ vlan['name'] }}
 !
 {%- endfor %}
-vrf instance servers-underlay
-!
 interface Port-Channel1
    switchport mode trunk
 !
