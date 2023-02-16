@@ -1,10 +1,6 @@
 vlans:
     50:
         name: internet
-    2001:
-        name: poasnet1
-    2002:
-        name: poasnet2
     2100:
         name: management
         host_base: 10.4.0.30
