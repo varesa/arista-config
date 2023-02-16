@@ -105,3 +105,5 @@ evpn_peers:
         - 10.4.51.14
         - 10.4.52.14
         overlay: 10.4.3.9
+        vlans:
+        - management

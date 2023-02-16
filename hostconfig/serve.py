@@ -55,7 +55,15 @@ def get_vars() -> dict:
         vars[f'swip_{side}'] = str(IPv4Address(peer_params['underlay'][offset])-1)
 
     # VLANs
-    vars['vlans'] = sw_vars['vlans']
+    host_vlans_list = peer_params.get('vlans')
+    if host_vlans_list:
+        vars['vlans'] = {}
+        for vlan_id, vlan in sw_vars['vlans'].items():
+            if vlan_id in host_vlans_list or vlan['name'] in host_vlans_list:
+                vars['vlans'][vlan_id] = sw_vars['vlans'][vlan_id]
+    else:
+        vars['vlans'] = sw_vars['vlans']
+
     for vlan_id, vlan in vars['vlans'].items():
         if 'host_base' in vlan.keys():
             vars['vlans'][vlan_id]['host_ip'] = str(IPv4Address(vlan['host_base']) + peer_id)
