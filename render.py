@@ -43,11 +43,23 @@ def if_filter(interfaces: dict) -> dict:
     return filtered
 
 
+def dhcp_sort_key(pool: dict):
+    octets = pool['network'].split('/')[0].split('.')
+    sort_key = [int(octet) for octet in octets]
+    #print(sort_key)
+    return sort_key
+
+
+def dhcp_sort(pools: list):
+    return sorted(pools, key=dhcp_sort_key)
+
+
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader('.'))
 jinja_env.filters['ip_address'] = ip_address
 jinja_env.filters['ip_mask'] = ip_mask
 jinja_env.filters['if_sort'] = if_sort
 jinja_env.filters['if_filter'] = if_filter
+jinja_env.filters['dhcp_sort'] = dhcp_sort
 jinja_env.undefined = jinja2.StrictUndefined
 template = jinja_env.get_template('template.j2')
 

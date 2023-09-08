@@ -3,7 +3,7 @@ daemon hostconfig
    no shutdown
 !
 dhcp server
-{%- for pool in dhcp_pools %}
+{%- for pool in dhcp_pools | dhcp_sort %}
    subnet {{ pool['network'] }}
       range {{ pool['address'] }} {{ pool['address'] }}
 {{ "   !" if not loop.last }}
