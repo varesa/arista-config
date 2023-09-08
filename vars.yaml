@@ -1,6 +1,8 @@
 vlans:
     50:
         name: internet
+    2070:
+        name: netapp
     2100:
         name: management
         host_base: 10.4.0.30
@@ -55,17 +57,12 @@ interfaces:
         ignore: true
 
     'Ethernet9/1':
-        vlans: '2001-2002'
-    'Ethernet9/2':
-        ignore: true
-    'Ethernet9/3':
-        ignore: true
-    'Ethernet9/4':
-        ignore: true
+        description: temporary port to attach files.tre.esav.fi
+        vlans: '2100'
 
     'Ethernet25':
         description: POASnet her0-rtr1
-        vlans: '50'
+        vlans: '50,2070'
 
     'Ethernet31':
         recirc: true
@@ -80,6 +77,10 @@ evpn_peers:
         - 10.4.51.2
         - 10.4.52.2
         overlay: 10.4.3.1
+        vlans:
+        - internet
+        - management
+        - storage
     2:
         asn: 65402
         name: kvm02
@@ -87,6 +88,10 @@ evpn_peers:
         - 10.4.51.6
         - 10.4.52.6
         overlay: 10.4.3.2
+        vlans:
+        - internet
+        - management
+        - storage
     3:
         asn: 65403
         name: kvm03
@@ -94,6 +99,10 @@ evpn_peers:
         - 10.4.51.10
         - 10.4.52.10
         overlay: 10.4.3.3
+        vlans:
+        - internet
+        - management
+        - storage
     9:
         asn: 65409
         name: vault
@@ -103,3 +112,4 @@ evpn_peers:
         overlay: 10.4.3.9
         vlans:
         - management
+        - netapp
