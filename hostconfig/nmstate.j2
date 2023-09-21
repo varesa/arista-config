@@ -27,7 +27,7 @@ interfaces:
 - name: vxlan{{ vlan_id }}
   type: vxlan
   state: up
-  mtu: 1500
+  mtu: {{ vlan['mtu'] | default(1500) }}
   vxlan:
     destination-port: 4789
     id: {{ vlan_id }}
@@ -50,7 +50,7 @@ interfaces:
     - ip: {{ vlan['host_ip'] }}
       prefix-length: 24
   {%- endif %}
-  mtu: 1500
+  mtu: {{ vlan['mtu'] | default(1500) }}
 {% endfor %}
 
 - name: eno1
@@ -63,7 +63,7 @@ interfaces:
       prefix-length: 30
   lldp:
     enabled: true
-  mtu: 2000
+  mtu: 9214
 - name: eno2
   type: ethernet
   state: up
@@ -74,5 +74,5 @@ interfaces:
       prefix-length: 30
   lldp:
     enabled: true
-  mtu: 2000
+  mtu: 9214
 

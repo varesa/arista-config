@@ -3,6 +3,8 @@ vlans:
         name: internet
     2070:
         name: netapp
+        host_base: 10.4.7.30
+        mtu: 9000
     2100:
         name: management
         host_base: 10.4.0.30
