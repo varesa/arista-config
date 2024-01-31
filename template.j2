@@ -72,6 +72,10 @@ interface {{ intf_name }}
    ip address {{ intf['address'] }}
  {%- endif %}
 
+ {%- if intf['vlan'] | default(False) %}
+   switchport access vlan {{ intf['vlan'] }}
+ {%- endif %}
+
  {%- if intf['vlans'] | default(False) %}
    switchport trunk allowed vlan {{ intf['vlans'] }}
    switchport mode trunk

@@ -43,4 +43,4 @@ else:
 	print("<enter to apply>")
 	input()
 	apply_config(candidate_config)
-    print("Success.")
+	print("Success.")

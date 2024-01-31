@@ -11,10 +11,9 @@ vlans:
     2102:
         name: storage
         host_base: 10.4.2.30
-    2201:
-        name: test1
-    2202:
-        name: test2
+    2150:
+        name: evpnextension
+
 
 laggs: {}
 
@@ -58,13 +57,14 @@ interfaces:
     'Ethernet5/4':
         ignore: true
 
-    'Ethernet9/1':
-        description: temporary port to attach files.tre.esav.fi
-        vlans: '2100'
-
     'Ethernet25':
         description: POASnet her0-rtr1
         vlans: '50,2070'
+
+    'Ethernet29':
+        address: 10.4.50.1/24
+    'Ethernet30':
+        vlan: '2150'
 
     'Ethernet31':
         recirc: true
@@ -83,6 +83,7 @@ evpn_peers:
         - internet
         - management
         - storage
+        - evpnextension
     2:
         asn: 65402
         name: kvm02
@@ -94,6 +95,7 @@ evpn_peers:
         - internet
         - management
         - storage
+        - evpnextension
     3:
         asn: 65403
         name: kvm03
@@ -105,6 +107,7 @@ evpn_peers:
         - internet
         - management
         - storage
+        - evpnextension
     9:
         asn: 65409
         name: vault
