@@ -11,6 +11,10 @@ vlans:
     2102:
         name: storage
         host_base: 10.4.2.30
+    2111:
+        name: pa-ha-1
+    2112:
+        name: pa-ha-2
     2150:
         name: evpnextension
 
@@ -83,6 +87,8 @@ evpn_peers:
         - internet
         - management
         - storage
+        - pa-ha-1
+        - pa-ha-2
         - evpnextension
     2:
         asn: 65402
@@ -95,6 +101,8 @@ evpn_peers:
         - internet
         - management
         - storage
+        - pa-ha-1
+        - pa-ha-2
         - evpnextension
     3:
         asn: 65403
@@ -107,6 +115,8 @@ evpn_peers:
         - internet
         - management
         - storage
+        - pa-ha-1
+        - pa-ha-2
         - evpnextension
     9:
         asn: 65409

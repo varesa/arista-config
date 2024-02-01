@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/admin/config/venv/bin/python3
 
 from subprocess import run, PIPE, check_output, CalledProcessError
 from jinja2 import Environment, FileSystemLoader
