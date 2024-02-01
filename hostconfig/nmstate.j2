@@ -53,7 +53,7 @@ interfaces:
   mtu: {{ vlan['mtu'] | default(1500) }}
 {% endfor %}
 
-- name: eno1
+- name: eno1np0
   type: ethernet
   state: up
   ipv4:
@@ -64,7 +64,7 @@ interfaces:
   lldp:
     enabled: true
   mtu: 9214
-- name: eno2
+- name: eno2np1
   type: ethernet
   state: up
   ipv4:
