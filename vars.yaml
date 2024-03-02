@@ -15,6 +15,10 @@ vlans:
         name: pa-ha-1
     2112:
         name: pa-ha-2
+    2115:
+        name: pa-i24-admin
+    2116:
+        name: pa-i24-guest
     2150:
         name: evpnextension
 
@@ -51,6 +55,12 @@ interfaces:
         address: 10.4.52.9/30
         dhcp: true
 
+    # kvm04-network
+    'Ethernet3/1':
+        address: 10.4.51.17/30
+        dhcp: true
+    # Ethernet4 broken, see Et6
+
     'Ethernet5/1':
         description: management switch
         vlans: '2100'
@@ -60,6 +70,10 @@ interfaces:
         ignore: true
     'Ethernet5/4':
         ignore: true
+
+    'Ethernet6/1':
+        address: 10.4.52.17/30
+        dhcp: true
 
     'Ethernet25':
         description: POASnet her0-rtr1
@@ -117,6 +131,23 @@ evpn_peers:
         - storage
         - pa-ha-1
         - pa-ha-2
+        - evpnextension
+    4:
+        asn: 65404
+        name: kvm04
+        # vault is before this
+        underlay:
+        - 10.4.51.18
+        - 10.4.52.18
+        overlay: 10.4.3.4
+        vlans:
+        - internet
+        - management
+        - storage
+        - pa-ha-1
+        - pa-ha-2
+        - pa-i24-admin
+        - pa-i24-guest
         - evpnextension
     9:
         asn: 65409
