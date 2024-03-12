@@ -103,6 +103,8 @@ evpn_peers:
         - storage
         - pa-ha-1
         - pa-ha-2
+        - pa-i24-admin
+        - pa-i24-guest
         - evpnextension
     2:
         asn: 65402
@@ -117,6 +119,8 @@ evpn_peers:
         - storage
         - pa-ha-1
         - pa-ha-2
+        - pa-i24-admin
+        - pa-i24-guest
         - evpnextension
     3:
         asn: 65403
@@ -131,6 +135,8 @@ evpn_peers:
         - storage
         - pa-ha-1
         - pa-ha-2
+        - pa-i24-admin
+        - pa-i24-guest
         - evpnextension
     4:
         asn: 65404
